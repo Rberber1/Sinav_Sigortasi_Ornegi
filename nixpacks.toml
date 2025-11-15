@@ -1,0 +1,17 @@
+# Railway'e hangi "Buildpack" (teknoloji) kullanılacağını söyler
+providers = ["dotnet"]
+
+# Kurulum aşamasında hangi .NET SDK'sının kurulacağını söyler
+[phases.setup]
+nixPkgs = ["dotnet-sdk_8"]
+
+# Projeyi nasıl "build" edeceğini (yayınlayacağını) söyler
+[phases.build]
+cmds = [
+    "dotnet restore", # Kütüphaneleri yükle
+    "dotnet publish \"web-projem.csproj\" -c Release -o out" # Projeyi 'out' klasörüne yayınla
+]
+
+# Projeyi nasıl "başlatacağını" söyler
+[start]
+cmd = "dotnet out/web-projem.csproj"
