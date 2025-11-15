@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sigorta Portalı - Ödeme</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-body">
+
+    <!-- Sidebar (Yan Menü) -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>Sigorta Paneli</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="nav-item"><a href="index.html">Ana Sayfa</a></li>
+                <li class="nav-item active"><a href="policy.html">Poliçe Üretimi</a></li>
+                <li class="nav-item"><a href="claim.html">Hasar Girişi</a></li>
+                <li class="nav-item"><a href="reports.html">Ödeme Modülü</a></li>
+                <li class="nav-item-divider"></li>
+                <li class="nav-item"><a href="login.html">Çıkış Yap</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Ana İçerik Alanı -->
+    <div class="main-content">
+        
+        <header class="main-header">
+            <div class="user-info">
+                <span>Hoşgeldin, Kullanıcı!</span>
+            </div>
+        </header>
+        
+        <main class="content-area">
+            <h1>Poliçe Ödeme Ekranı</h1>
+            
+            <div class="form-container">
+                <div id="payment-summary">
+                    <h3>Ödeme Özeti</h3>
+                    <p>Sigorta poliçenizi oluşturmak üzeresiniz.</p>
+                    
+                    <div class="payment-total">
+                        <span>Toplam Ödenecek Tutar:</span>
+                        <span id="total-prim-display">Hesaplanıyor...</span>
+                    </div>
+                </div>
+
+                <form id="paymentForm">
+                    <h3 style="margin-top: 2rem;">Kart Bilgileri (Sahte Form)</h3>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="cardName">Kart Üzerindeki İsim:</label>
+                            <input type="text" id="cardName" value="Rb">
+                        </div>
+                        <div class="input-group">
+                            <label for="cardNumber">Kart Numarası:</label>
+                            <input type="text" id="cardNumber" value="1234 5678 1234 5678">
+                        </div>
+                        <div class="input-group">
+                            <label for="cardExpiry">Son Kullanma Tarihi (AA/YY):</label>
+                            <input type="text" id="cardExpiry" value="12/28">
+                        </div>
+                        <div class="input-group">
+                            <label for="cardCVC">CVC:</label>
+                            <input type="text" id="cardCVC" value="123">
+                        </div>
+                    </div>
+                    
+                    <button type="button" id="completePaymentButton" class="button-primary">
+                        Ödemeyi Tamamla ve Poliçeyi Oluştur
+                    </button>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <!-- YENİ: Ödeme sayfasının kendi JS dosyası -->
+    <script src="js/payment.js"></script>
+</body>
+</html>

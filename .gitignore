@@ -1,0 +1,26 @@
+# Bu dosyanın adını projenizin ana dizininde (Program.cs'in yanında)
+# ".gitignore" olarak kaydedin (başında nokta olacak, uzantısı olmayacak)
+
+# Veritabanı dosyası
+# Bu, sunucudaki gerçek veritabanıdır, koda dahil edilmemelidir.
+*.db
+*.db-journal
+
+# ASP.NET Core build çıktıları
+[Bb]in/
+[Oo]bj/
+
+# Kullanıcıya özel dosyalar
+*.user
+*.suo
+*.sln.docstates
+
+# Rider/VS Mac özel
+.idea/
+.vs/
+
+# Kütüphane araçları
+.config/dotnet-tools.json
+
+# Log dosyaları
+*.log

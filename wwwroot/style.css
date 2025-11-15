@@ -1,0 +1,625 @@
+/* Genel Sıfırlama ve Temel Ayarlar */
+* {
+    box-sizing: border-box; /* Modern CSS'in temeli */
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5; /* Hafif bir arka plan rengi */
+    color: #333;
+    
+    /* Flexbox kullanarak içeriği dikey ve yatayda ortalıyoruz */
+    display: flex;
+    justify-content: center; /* Yatayda ortala */
+    align-items: center;    /* Dikeyde ortala */
+    min-height: 100vh;      /* Sayfa yüksekliğini en az ekran kadar yap */
+}
+
+/* Giriş kutusunun ana konteyneri */
+.login-container {
+    width: 100%;
+    max-width: 400px; /* Kutunun maksimum genişliği */
+    padding: 20px;
+}
+
+.login-box {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Hafif bir gölge */
+    text-align: center;
+}
+
+.login-box h2 {
+    margin-bottom: 0.5rem;
+    color: #1c1e21;
+}
+
+.login-box p {
+    margin-bottom: 1.5rem;
+    color: #606770;
+}
+
+/* Form elemanları */
+.input-group {
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+/* Giriş Butonu */
+.login-button {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #007bff; /* Ana renk (mavi) */
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer; /* Üzerine gelince el işareti */
+    transition: background-color 0.2s ease;
+}
+
+.login-button:hover {
+    background-color: #0056b3; /* Hover rengi */
+}
+
+/* Alt kısımdaki link */
+.login-footer {
+    margin-top: 1.5rem;
+}
+
+.login-footer a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}
+/* ========================================= */
+/* DASHBOARD (PANEL) STİLLERİ             */
+/* ========================================= */
+
+/* Login sayfasındaki ortalamayı iptal edip, 
+   Flexbox'ı panel düzeni için kullanıyoruz. */
+body.dashboard-body {
+    display: flex;
+    flex-direction: row; /* Yan yana diz (sidebar + main-content) */
+    background-color: #f9f9f9; /* Panelin ana arka planı */
+    
+    /* Login'den gelen dikey hizalamayı sıfırla */
+    align-items: flex-start; 
+    justify-content: flex-start;
+}
+
+/* 1. Sol Menü (Sidebar) */
+.sidebar {
+    width: 260px; /* Sabit genişlik */
+    background-color: #2c3e50; /* Koyu mavi-gri */
+    color: #ecf0f1; /* Açık renk yazı */
+    min-height: 100vh; /* Tüm ekran yüksekliğini kapla */
+    flex-shrink: 0; /* Küçülme */
+}
+
+.sidebar-header {
+    padding: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid #34495e;
+}
+
+.sidebar-header h3 {
+    font-size: 1.25rem;
+}
+
+.sidebar-nav ul {
+    list-style: none; /* Liste noktalarını kaldır */
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav .nav-item a {
+    display: block; /* Tüm satırı tıklanabilir yap */
+    color: #ecf0f1;
+    text-decoration: none;
+    padding: 1rem 1.5rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.sidebar-nav .nav-item a:hover {
+    background-color: #34495e; /* Hover efekti */
+}
+
+.sidebar-nav .nav-item.active a {
+    background-color: #007bff; /* Aktif menü rengi (login butonuyla aynı) */
+    color: #fff;
+}
+
+.nav-item-divider {
+    height: 1px;
+    background-color: #34495e;
+    margin: 1rem 0;
+}
+
+/* 2. Sağ Taraf (Ana İçerik) */
+.main-content {
+    flex-grow: 1; /* Kalan tüm alanı kapla */
+    display: flex;
+    flex-direction: column; /* Üst bar ve ana içeriği alt alta diz */
+}
+
+.main-header {
+    background-color: #ffffff;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: flex-end; /* İçeriği sağa yasla */
+    border-bottom: 1px solid #ddd;
+}
+
+.user-info span {
+    font-weight: 600;
+    color: #333;
+}
+
+.content-area {
+    padding: 2rem;
+    flex-grow: 1; /* Kalan tüm dikey alanı kapla */
+}
+
+.content-area h1 {
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+/* Ana sayfadaki istatistik kutuları */
+.stats-container {
+    display: flex;
+    gap: 1.5rem; /* Kutular arası boşluk (Modern CSS) */
+    margin-top: 2rem;
+}
+
+.stat-box {
+    flex: 1; /* Eşit genişlikte dağıl */
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+}
+
+.stat-box h4 {
+    margin-bottom: 0.5rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.stat-box span {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+}
+/* ========================================= */
+/* FORM STİLLERİ (Poliçe vb.)            */
+/* ========================================= */
+
+.form-container {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    margin-top: 2rem;
+}
+
+.form-container h3 {
+    border-bottom: 2px solid #f0f2f5;
+    padding-bottom: 0.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: #007bff;
+}
+.form-container h3:first-of-type {
+    margin-top: 0;
+}
+
+/* Formu 2'li sütunlara ayırmak için */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* İki eşit sütun */
+    gap: 1.5rem; /* Sütunlar arası boşluk */
+}
+
+/* Tek sütunlu grid (bazı yerlerde hizalama için) */
+.form-grid-single {
+     display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    max-width: 66%; /* İki kutu yanyana ama çok genişlemesin */
+}
+
+
+/* Form elemanları için (label, input) */
+.form-container .input-group {
+    margin-bottom: 0; /* Grid kullandığımız için alttaki boşluğa gerek yok */
+}
+
+.form-container .input-group input,
+.form-container .input-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: #fdfdfd;
+}
+
+/* Ana Eylem Butonu */
+.button-primary {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #28a745; /* Yeşil - Oluşturma */
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 2rem;
+}
+
+.button-primary:hover {
+    background-color: #218838;
+}
+/* ========================================= */
+/* İPUCU (TOOLTIP) STİLİ                  */
+/* ========================================= */
+
+.tooltip {
+    text-decoration: underline dotted;
+    cursor: help;
+}
+/* ========================================= */
+/* ADIMLAYICI (STEPPER) STİLLERİ           */
+/* ========================================= */
+
+.stepper-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+    flex: 1;
+}
+
+.step .step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ddd;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    transition: background-color 0.3s ease;
+}
+
+.step .step-label {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #888;
+    transition: color 0.3s ease;
+}
+
+/* Adımlar arasındaki çizgi */
+.step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background-color: #ddd;
+    z-index: 1;
+    transition: background-color 0.3s ease;
+}
+
+/* Aktif (mevcut) adım */
+.step.active .step-circle {
+    background-color: #007bff; /* Mavi */
+}
+.step.active .step-label {
+    color: #007bff;
+    font-weight: 600;
+}
+
+/* Tamamlanmış adım */
+.step.completed .step-circle {
+    background-color: #28a745; /* Yeşil */
+}
+.step.completed .step-label {
+    color: #333;
+}
+.step.completed::after {
+    background-color: #28a745;
+}
+
+
+/* ========================================= */
+/* FORM ADIMLARI (GİZLE/GÖSTER)             */
+/* ========================================= */
+
+.form-step {
+    display: none; /* Varsayılan olarak tüm adımları gizle */
+}
+
+.form-step.active {
+    display: block; /* Sadece aktif olan adımı göster */
+}
+
+/* Adımlar arası butonlar */
+.step-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+
+/* Geri butonunu gizle (sadece JS ile gösterilecek) */
+#prevButton {
+    display: none; 
+}
+/* ========================================= */
+/* İKİNCİL BUTON (Mavi - Geri, Hesapla)     */
+/* ========================================= */
+
+.button-secondary {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #007bff; /* Mavi - İkincil Eylem */
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 2rem;
+    margin-right: 1rem; /* Diğer butonla arasına boşluk */
+}
+
+.button-secondary:hover {
+    background-color: #0056b3;
+}
+/* ========================================= */
+/* AI PRİM HESAPLA BUTONU STİLİ (GÜNCELLENDİ)*/
+/* ========================================= */
+
+.button-ai-calculate {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px; /* Daha yuvarlak köşeler */
+    background-color: #e91e63; /* Gül Kırmızısı */
+    color: white;
+    font-size: 1.1rem; /* Daha büyük yazı */
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Tüm geçişler için animasyon */
+    margin-top: 2rem;
+    margin-right: 1rem; /* Yanındaki butondan sağa boşluk */
+    display: flex; /* Logo ve metni aynı hizada tutmak için */
+    justify-content: center; /* İçeriği yatayda ortala */
+    align-items: center; /* İçeriği dikeyde ortala */
+    gap: 0.5rem; /* Logo ile metin arasına boşluk */
+    box-shadow: 0 0 15px rgba(233, 30, 99, 0.6); /* Hafif gölge */
+    animation: pulse 2s infinite ease-in-out; /* Parlama animasyonu */
+    min-width: 180px; /* Minimum genişlik belirleyerek butonun çok dar olmasını engelle */
+    /* YENİ: flex-shrink ve z-index ekleyerek logonun daha iyi yönetilmesini sağlıyoruz */
+    flex-shrink: 0; 
+    position: relative; /* İçindeki logo için konumlandırma */
+    overflow: hidden; /* Taşmaları gizle */
+}
+
+.button-ai-calculate:hover {
+    background-color: #c2185b; /* Hover'da daha koyu gül kırmızısı */
+    box-shadow: 0 0 25px rgba(233, 30, 99, 0.9); /* Hover'da daha belirgin gölge */
+    transform: translateY(-2px); /* Hafif yukarı kayma efekti */
+}
+
+.button-ai-calculate .ai-logo {
+    width: 24px; /* Logo boyutu */
+    height: 24px;
+    object-fit: contain; /* Görselin boyutlarını koruyarak içine sığdırır */
+    filter: brightness(0) invert(1); /* Logoyu beyaza çevir */
+    /* YENİ: flex-shrink: 0 ile logonun küçülmesini engelle */
+    flex-shrink: 0;
+}
+
+/* YENİ: Buton içindeki metin için stil */
+.button-ai-calculate span {
+    white-space: nowrap; /* Metnin tek satırda kalmasını sağla */
+}
+
+/* ========================================= */
+/* İKİNCİL BUTON (Mavi - Geri, Hesapla)     */
+/* ========================================= */
+
+.button-secondary {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #007bff; /* Mavi - İkincil Eylem */
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 2rem;
+    margin-right: 1rem; /* Diğer butonla arasına boşluk EKLENDİ! */
+}
+
+.button-secondary:hover {
+    background-color: #0056b3;
+}
+
+/* Butonun parlamasını sağlayan keyframe animasyonu */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 15px rgba(233, 30, 99, 0.6);
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(233, 30, 99, 1); /* Daha parlak */
+    }
+    100% {
+        box-shadow: 0 0 15px rgba(233, 30, 99, 0.6);
+    }
+}
+/*[Immersive content redacted for brevity.]
+/* ========================================= */
+/* LOGIN 3D ANİMASYON DÜZELTMELERİ      */
+/* ========================================= */
+
+/* Eski 'body' stilinin 3D canvas ile çakışmasını engelle */
+/* 'display: flex' ve 'min-height' ayarlarını sıfırlıyoruz */
+body.login-body {
+    min-height: 100vh;
+    display: block; /* Flex'i iptal et */
+    background-color: #0056b3; /* 3D Arkaplan rengi */
+    overflow: hidden; /* Kaydırma çubuklarını gizle */
+}
+
+/* 3D animasyonun gösterileceği canvas */
+#backgroundCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Formun arkasında */
+}
+/* ========================================= */
+/* LOGIN 3D ANİMASYON DÜZELTMELERİ      */
+/* ========================================= */
+
+/* Eski 'body' stilinin 3D canvas ile çakışmasını engelle */
+/* 'display: flex' ve 'min-height' ayarlarını sıfırlıyoruz */
+body.login-body {
+    min-height: 100vh;
+    display: block; /* Flex'i iptal et */
+    background-color: #111; /* 3D Arkaplan rengi */
+    overflow: hidden; /* Kaydırma çubuklarını gizle */
+}
+
+/* 3D animasyonun gösterileceği canvas */
+#backgroundCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Formun arkasında */
+}
+
+/* ========================================= */
+/* YENİ 3D LOGIN FORMU STİLLERİ           */
+/* ========================================= */
+
+.login-container-3d {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2; /* Canvas'ın önünde */
+    
+    width: 90%;
+    max-width: 420px;
+    padding: 2.5rem;
+    
+    /* Yarı şeffaf, "frosted glass" (buzlu cam) efekti */
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Safari desteği */
+    
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.login-title {
+    color: #ffffff;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    letter-spacing: 1px;
+}
+
+.login-form .input-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.login-form .input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #f0f0f0; /* Açık renk etiket */
+}
+
+.login-form .input-group input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #fff; /* Beyaz yazı */
+    background-color: rgba(0, 0, 0, 0.3); /* Koyu yarı şeffaf input arkaplanı */
+}
+
+.login-form .input-group input::placeholder {
+    color: #ccc;
+}
+
+.login-form .login-button {
+    width: 100%;
+    padding: 0.85rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #007bff;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.login-form .login-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px); /* Hafif yükselme efekti */
+}

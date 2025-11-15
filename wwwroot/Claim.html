@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sigorta Portalı - Hasar Girişi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-body">
+
+    <!-- Sidebar (Yan Menü) -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>Sigorta Paneli</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="nav-item"><a href="index.html">Ana Sayfa</a></li>
+                <li class="nav-item"><a href="policy.html">Poliçe Üretimi</a></li>
+                <li class="nav-item active"> <!-- 'active' class'ı artık burada -->
+                    <a href="claim.html">Hasar Girişi</a>
+                </li>
+                <li class="nav-item"><a href="reports.html">Ödeme Modülü</a></li>
+                <li class="nav-item-divider"></li>
+                <li class="nav-item"><a href="login.html">Çıkış Yap</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Ana İçerik Alanı -->
+    <div class="main-content">
+        
+        <header class="main-header">
+            <div class="user-info">
+                <span>Hoşgeldin, Kullanıcı!</span>
+            </div>
+        </header>
+        
+        <main class="content-area">
+            <h1>Yeni Hasar Talebi Oluştur</h1>
+            <p>Sınava girememenize neden olan durum için lütfen poliçe ve belge bilgilerinizi giriniz.</p>
+            
+            <div class="form-container">
+                <!-- 
+                    Dosya yükleme (PDF) için formun 'enctype' özelliği OLMALIDIR
+                -->
+                <form id="claimForm" enctype="multipart/form-data">
+                    
+                    <h3>Poliçe ve Hasar Bilgileri</h3>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="studentTC">Sigortalı T.C. Kimlik No:</label>
+                            <input type="text" id="studentTC" name="studentTC" placeholder="Poliçeyi bulmak için TCKN girin" required>
+                        </div>
+                         <div class="input-group">
+                            <label for="paymentAddress">Ödeme Adresi (IBAN / Cüzdan):</label>
+                            <input type="text" id="paymentAddress" name="paymentAddress" placeholder="TR... veya 0x..." required>
+                        </div>
+                    </div>
+
+                    <div class="input-group" style="margin-top: 1rem;">
+                        <label for="reason">Hasar Nedeni (Açıklama):</label>
+                        <textarea id="reason" name="reason" rows="3" placeholder="örn: Sınavdan bir gün önce acil ameliyat oldum." required></textarea>
+                    </div>
+
+                    <h3>Belge Yükleme ve AI Onayı</h3>
+                    <div class="input-group">
+                        <label for="documentUpload">Gerekçeli Belge (PDF):</label>
+                        <input type="file" id="documentUpload" name="documentUpload" accept="application/pdf" required>
+                    </div>
+
+                    <!-- Bu bizim "Sahte AI" onayımız -->
+                    <div class="input-group" style="margin-top: 2rem; background-color: #f0f2f5; padding: 1rem; border-radius: 8px;">
+                        <label for="aiConfirmCheckbox" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" id="aiConfirmCheckbox" name="aiConfirmCheckbox" required style="width: 20px; height: 20px;">
+                            <span style="font-weight: 600; color: #333;">
+                                Yüklediğim belgenin (PDF) poliçemdeki sınav tarihinden hemen önce gerçekleşen ve sınava girmemi engelleyen geçerli bir durumu (örn: ameliyat raporu) gösterdiğini onaylıyorum.
+                            </span>
+                        </label>
+                    </div>
+                    
+                    <button type="button" id="createClaimButton" class="button-primary" style="margin-top: 2rem;">
+                        Hasar Talebini Gönder ve AI Analizini Başlat
+                    </button>
+                    
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <!-- YENİ: Hasar sayfasının kendi JS dosyası -->
+    <script src="js/claim.js"></script>
+</body>
+</html>

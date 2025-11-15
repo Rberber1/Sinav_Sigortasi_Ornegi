@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sigorta Portalı - Ödeme Raporları</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-body">
+
+    <!-- Sidebar (Yan Menü) -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>Sigorta Paneli</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="nav-item"><a href="index.html">Ana Sayfa</a></li>
+                <li class="nav-item"><a href="policy.html">Poliçe Üretimi</a></li>
+                <li class="nav-item"><a href="claim.html">Hasar Girişi</a></li>
+                <li class="nav-item active"> <!-- 'active' class'ı artık burada -->
+                    <a href="reports.html">Ödeme Modülü</a>
+                </li>
+                <li class="nav-item-divider"></li>
+                <li class="nav-item"><a href="login.html">Çıkış Yap</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Ana İçerik Alanı -->
+    <div class="main-content">
+        
+        <header class="main-header">
+            <div class="user-info">
+                <span>Hoşgeldin, Kullanıcı!</span>
+            </div>
+        </header>
+        
+        <main class="content-area">
+            <h1>Ödeme Modülü - Tamamlanan Hasar Raporları</h1>
+            <p>Onaylanan ve ödemesi (simüle) yapılan tüm hasar kayıtları.</p>
+            
+            <div class="form-container">
+                <!-- Rapor tablosu -->
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>Hasar No</th>
+                            <th>Poliçe No</th>
+                            <th>Sigortalı</th>
+                            <th>Ödeme Tutarı (TL)</th>
+                            <th>Hasar Tarihi</th>
+                            <th>Ödeme Adresi (IBAN/Cüzdan)</th>
+                            <th>Blockchain Hash (Ödeme)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reports-table-body">
+                        <!-- JS burayı dolduracak -->
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 2rem;">Rapor yükleniyor...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    
+    <!-- YENİ: Rapor sayfasının kendi JS dosyası -->
+    <script src="js/reports.js"></script>
+</body>
+</html>

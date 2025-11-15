@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sigorta Portalı - Poliçe Üretimi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-body">
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>Sigorta Paneli</h3>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="nav-item"><a href="index.html">Ana Sayfa</a></li>
+                <li class="nav-item active"><a href="policy.html">Poliçe Üretimi</a></li>
+                <li class="nav-item"><a href="claim.html">Hasar Girişi</a></li>
+                <li class="nav-item"><a href="reports.html">Ödeme Modülü</a></li>
+                <li class="nav-item-divider"></li>
+                <li class="nav-item"><a href="login.html">Çıkış Yap</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div class="main-content">
+        
+        <header class="main-header">
+            <div class="user-info">
+                <span>Hoşgeldin, Kullanıcı!</span>
+            </div>
+        </header>
+        
+        <main class="content-area">
+            <h1>Yeni Sınav Sigortası Poliçesi Üret</h1>
+            
+            <div class="stepper-container">
+                <div class="step active" id="step-1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Sigortalı Bilgileri</div>
+                </div>
+                <div class="step" id="step-2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Sınav & Risk Bilgileri</div>
+                </div>
+                <div class="step" id="step-3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Prim & Onay</div>
+                </div>
+            </div>
+            
+            <div class="form-container">
+                <form id="policyForm">
+                    
+                    <div class="form-step active" id="form-step-1">
+                        <h3>Sigorta Ettiren ve Sigortalı Bilgileri</h3>
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label for="policyHolder">Sigorta Ettiren (Kurum/Kişi):</label>
+                                <input type="text" id="policyHolder" name="policyHolder" placeholder="örn: X Kurs Eğitim Kurumları" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="studentName">Öğrenci Adı Soyadı:</label>
+                                <input type="text" id="studentName" name="studentName" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="studentTC">Öğrenci T.C. Kimlik No:</label>
+                                <input type="text" id="studentTC" name="studentTC" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="dateOfBirth">Doğum Tarihi:</label>
+                                <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-step" id="form-step-2">
+                        <h3>Sınav ve Risk Bilgileri</h3>
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label for="examName">Sınav Adı:</label>
+                                <select id="examName" name="examName" required>
+                                    <option value="">-- Sınav Seçin --</option>
+                                    <option value="YKS">YKS</option>
+                                    <option value="LGS">LGS</option>
+                                    <option value="KPSS">KPSS</option>
+                                    <option value="TOEFL">TOEFL</option>
+                                    <option value="YDS">YDS</option>
+                                    <option value="SPK">SPK Lisanslama</option>
+                                    <option value="EHLIYET">Ehliyet Sınavı</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="examDate">Sınav Tarihi:</label>
+                                <input type="date" id="examDate" name="examDate" required>
+                            </div>
+                            <div class="input-group">
+                                <label for="examCity">Sınav İli (Başvuru İli):</label>
+                                <select id="examCity" name="examCity" required>
+                                    <option value="">-- İl Seçin --</option>
+                                    <option value="İstanbul">İstanbul</option>
+                                    <option value="Ankara">Ankara</option>
+                                    <option value="İzmir">İzmir</option>
+                                    <option value="Adana">Adana</option>
+                                    <option value="Bursa">Bursa</option>
+                                    </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="examTime">Sınav Saati:</label>
+                                <input type="time" id="examTime" name="examTime" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-step" id="form-step-3">
+                        
+                        <h3>Risk Analizi ve Prim Dökümü</h3>
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label for="premiumT1">Risk Primi 1 (Tarih/Yer/Zaman):</label>
+                                <input type="number" id="premiumT1" name="premiumT1" value="0" readonly>
+                            </div>
+                            <div class="input-group">
+                                <label for="premiumT2">Risk Primi 2 (Yaş):</label>
+                                <input type="number" id="premiumT2" name="premiumT2" value="0" readonly>
+                            </div>
+                            <div class="input-group">
+                                <label for="premiumT3">Risk Primi 3 (Sınav Ücreti Baz):</label>
+                                <input type="number" id="premiumT3" name="premiumT3" value="0" readonly>
+                            </div>
+                            <div class="input-group">
+                                <label for="policyCount" class="tooltip" 
+                                       title="Son bir yıl içinde TCKN ile sistemde bulunan sınav sigortası adedi. Bu sayıya göre indirim otomatik uygulanır.">
+                                    Hasarsızlık İndirimi (Poliçe Adedi):
+                                </label>
+                                <input type="number" id="policyCount" name="policyCount" placeholder="TCKN giriniz..." readonly>
+                            </div>
+                            <div class="input-group">
+                                <label for="discountAmount">İndirim Tutarı:</label>
+                                <input type="number" id="discountAmount" name="discountAmount" value="0" readonly>
+                            </div>
+                        </div>
+
+                        <h3>Toplam Prim ve Teminat</h3>
+                        <div class="form-grid-single">
+                             <div class="input-group">
+                                <label for="coverageAmount">Toplam Teminat Tutarı (TL):</label>
+                                <input type="number" id="coverageAmount" name="coverageAmount" placeholder="Sınav ücreti..." readonly>
+                            </div>
+                            <div class="input-group">
+                                <label for="totalPremiumAmount">Toplam Hesaplanan Prim (TL):</label>
+                                <input type="number" id="totalPremiumAmount" name="totalPremiumAmount" placeholder="Toplam Prim..." readonly>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="step-buttons">
+                        <button type="button" id="prevButton" class="button-secondary">Geri</button>
+                        
+                        <button type="button" id="calculateButton" class="button-ai-calculate" style="display: none;">
+    <img src="images/Google_Gemini_logo.png" alt="Gemini AI Logo" class="ai-logo">
+    <span>AI Prim Hesapla</span> </button>
+                        
+                        <button type="button" id="createPolicyButton" class="button-primary" style="display: none;">Poliçeyi Oluştur</button>
+                        <button type="button" id="nextButton" class="button-primary">İleri</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script src="js/policy.js"></script>
+</body>
+</html>
