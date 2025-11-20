@@ -1,0 +1,12 @@
+{
+  "name": "yks-sigorta-projesi",
+  "version": "1.0.0",
+  "description": "Blok zinciri tabanlı sınav sigortası",
+  "scripts": {
+    "test": "hardhat test"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.0"
+  }
+}

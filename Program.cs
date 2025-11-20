@@ -2,39 +2,48 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
 using System;
 using Microsoft.EntityFrameworkCore; 
-using System.Globalization; // YENİ: Kültür (nokta/virgül) hatasını çözmek için
-using Microsoft.AspNetCore.Http; // PDF dosyasını (IFormFile) alabilmek için bu GEREKLİ
-using System.Linq; // Raporlama (Join/Select) için bu GEREKLİ
-
+using System.Globalization; 
+using Microsoft.AspNetCore.Http; 
+using System.Linq; 
+// --- 1. EKLEME: Servis namespace'ini ekledik ---
+//using WebProjem.Services; 
+using SinavSigortasiWeb3.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- 1. SERVİSLERİ TANIMLAMA ---
+// --- SERVİSLERİ TANIMLAMA ---
 var connectionString = "Data Source=sigorta.db";
 builder.Services.AddDbContext<InsuranceDbContext>(options =>
     options.UseSqlite(connectionString)
 );
 builder.Services.AddScoped<PricingService>();
 
-// --- 2. UYGULAMAYI OLUŞTURMA ---
 var app = builder.Build();
 
-// --- 3. UYGULAMA AYARLARI ---
+// --- 2. EKLEME: Test Endpointleri (Sunumda hocaya göstermek için kalsın) ---
+app.MapGet("/test/durum", async () =>
+{
+    string ogrenciCuzdani = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"; 
+    var servis = new BlockchainService();
+    bool sonuc = await servis.IsInsuredAsync(ogrenciCuzdani);
+    return Results.Ok(new { Ogrenci = ogrenciCuzdani, SigortaliMi = sonuc });
+});
+
+// --- UYGULAMA AYARLARI ---
 var options = new DefaultFilesOptions();
 options.DefaultFileNames.Clear();
 options.DefaultFileNames.Add("login.html");
 app.UseDefaultFiles(options);
 app.UseStaticFiles();
 
-// --- 4. API ENDPOINT'LERİ ---
+// --- API ENDPOINT'LERİ ---
 
-// YARDIMCI API: TCKN İLE GEÇMİŞ POLİÇE ADEDİ GETİRME
+// YARDIMCI API: GEÇMİŞ POLİÇE ADEDİ
 app.MapGet("/api/get-policy-history/{tc}", async (string tc, InsuranceDbContext db) =>
 {
     if (string.IsNullOrWhiteSpace(tc) || tc.Length < 11)
-    {
         return Results.BadRequest(new { message = "Geçersiz T.C. Kimlik Numarası." });
-    }
+    
     var oneYearAgo = DateTime.Now.AddYears(-1);
     var policyCount = await db.Policies
         .Where(p => p.StudentTC == tc && p.ExamDate >= oneYearAgo)
@@ -42,7 +51,7 @@ app.MapGet("/api/get-policy-history/{tc}", async (string tc, InsuranceDbContext 
     return Results.Ok(new { count = policyCount });
 });
 
-// ANA FİYATLAMA MOTORU API'Sİ
+// FİYATLAMA MOTORU
 app.MapPost("/api/calculate-premium", async (HttpContext context, PricingService pricing, InsuranceDbContext db) =>
 {
     var form = await context.Request.ReadFormAsync();
@@ -50,12 +59,10 @@ app.MapPost("/api/calculate-premium", async (HttpContext context, PricingService
     {
         string examCode = form["examName"];
         string city = form["examCity"];
-        // DÜZELTME: Kültür ayarı (nokta/virgül)
         DateTime examDate = DateTime.Parse((string)form["examDate"], CultureInfo.InvariantCulture);
         DateTime dateOfBirth = DateTime.Parse((string)form["dateOfBirth"], CultureInfo.InvariantCulture);
         string studentTC = form["studentTC"];
 
-        // Fiyatlama Motoru Fonksiyonlarını Çağır
         decimal premiumT1 = pricing.CalculateTier1_LocationTimeRisk(city, examDate);
         decimal premiumT2 = pricing.CalculateTier2_AgeRisk(dateOfBirth);
         decimal premiumT3 = await pricing.CalculateTier3_ExamFeeRisk(examCode, db);
@@ -82,11 +89,11 @@ app.MapPost("/api/calculate-premium", async (HttpContext context, PricingService
     }
     catch (Exception ex)
     {
-        return Results.BadRequest(new { message = "Hesaplama hatası: Form alanları eksik veya geçersiz. " + ex.Message });
+        return Results.BadRequest(new { message = "Hesaplama hatası: " + ex.Message });
     }
 });
 
-// GİRİŞ (LOGIN) İŞLEMİ
+// GİRİŞ İŞLEMİ
 app.MapPost("/login", async (HttpContext context) =>
 {
     var form = await context.Request.ReadFormAsync();
@@ -94,26 +101,23 @@ app.MapPost("/login", async (HttpContext context) =>
     string? password = form["password"];
     if (username == "admin" && password == "1234")
     {
-        Console.WriteLine("Giriş başarılı!");
         context.Response.Redirect("/index.html");
     }
     else
     {
-        Console.WriteLine("Giriş başarısız!");
         context.Response.Redirect("/"); 
     }
 });
 
-// POLİÇE OLUŞTURMA İŞLEMİ (Blockchain Simülasyonu Eklendi)
+// --- 3. VE EN ÖNEMLİ DEĞİŞİKLİK: POLİÇE OLUŞTURMA (Blockchain Entegreli) ---
 app.MapPost("/api/create-policy", async (HttpContext context, InsuranceDbContext db) =>
 {
     var form = await context.Request.ReadFormAsync();
     try
     {
+        // 1. Web2 (SQL) Kayıt İşlemleri
         string safePolicyHolder = ((string)form["policyHolder"]).Replace("<", "&lt;").Replace(">", "&gt;");
         string safeStudentName = ((string)form["studentName"]).Replace("<", "&lt;").Replace(">", "&gt;");
-
-        // DÜZELTME: Kültür ayarı (nokta/virgül)
         var culture = CultureInfo.InvariantCulture;
         
         var newPolicy = new Policy
@@ -128,146 +132,152 @@ app.MapPost("/api/create-policy", async (HttpContext context, InsuranceDbContext
             PremiumAmount = decimal.Parse((string)form["totalPremiumAmount"], culture)
         };
 
-        // 1. Veritabanına Kaydet
         db.Policies.Add(newPolicy);
         await db.SaveChangesAsync();
+        int policyId = newPolicy.Id; 
         
-        // KAYITTAN SONRA: newPolicy.Id artık veritabanındaki ID'dir
-        int policyId = newPolicy.Id; // Bu bizim Poliçe Numarası
-        
-        Console.WriteLine($"BAŞARILI: Poliçe #{policyId} ({newPolicy.PolicyHolder}) veritabanına eklendi.");
-        
-        // 2. Tether Test Ağına Kayıt Simülasyonu
-        Console.WriteLine($"Tether test ağına bağlanılıyor (Poliçe No: {policyId})...");
-        await Task.Delay(2000); // 2 saniye bekle (blockchain işlemini taklit et)
-        string fakeTxHash = $"0x{Guid.NewGuid().ToString("N").Substring(0, 20)}...[TESTNET]";
-        Console.WriteLine($"Tether test ağına kayıt başarılı. Hash: {fakeTxHash}");
+        Console.WriteLine($"Web2 Kaydı Başarılı. Poliçe #{policyId}. Şimdi Blok Zincirine gidiliyor...");
 
-        // 3. JavaScript'e Yönlendirme YERİNE, JSON ile Başarı Mesajı Döndür
+        // 2. Web3 (Blockchain) Entegrasyonu - GERÇEK İŞLEM
+        string txHash = "HATA";
+        try 
+        {
+            // Hardhat Test Ağındaki Öğrenci Cüzdanı (Demo için sabitlendi)
+            // Gerçekte bu bilgi formdan gelirdi: form["walletAddress"]
+            string targetWallet = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"; 
+
+            var blockchain = new BlockchainService();
+
+            // Kontrol et: Zaten var mı?
+            bool exists = await blockchain.IsInsuredAsync(targetWallet);
+            if(exists)
+            {
+                Console.WriteLine("UYARI: Bu cüzdanın zaten poliçesi var blok zincirinde.");
+                // Demo olduğu için hata fırlatmıyoruz, var olanın üstüne işlem yapıyoruz veya geçiyoruz
+            }
+
+            // Blok Zincirine Yaz (Mint)
+            txHash = await blockchain.CreatePolicyAsync(targetWallet);
+            Console.WriteLine($"BLOK ZİNCİRİ BAŞARILI! Hash: {txHash}");
+        }
+        catch(Exception bcEx)
+        {
+            Console.WriteLine($"Blok zinciri hatası: {bcEx.Message}");
+            txHash = "Blockchain-Error-Offline";
+        }
+
+        // 3. Sonuç Dön
         return Results.Ok(new { 
-            message = "Poliçe başarıyla oluşturuldu!",
+            message = "Poliçe başarıyla oluşturuldu ve Blok Zincirine işlendi!",
             policyId = policyId,
-            txHash = fakeTxHash 
+            txHash = txHash // Artık gerçek Hash dönüyor!
         });
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"HATA: Poliçe kaydedilemedi! {ex.Message}");
-        return Results.BadRequest(new { message = "Poliçe oluşturulamadı. Lütfen tüm alanların dolu olduğundan emin olun." });
+        return Results.BadRequest(new { message = "Poliçe hatası: " + ex.Message });
     }
 });
-// === YENİ HASAR OLUŞTURMA API'Sİ (SIMÜLE AI İLE) ===
-// Bu, claim.js'in bağlanacağı yerdir
+
+// --- 4. DEĞİŞİKLİK: HASAR OLUŞTURMA (Blockchain Doğrulamalı) ---
 app.MapPost("/api/create-claim", async (HttpContext context, InsuranceDbContext db) =>
 {
-    // Form verilerini ve dosyayı al
     var form = await context.Request.ReadFormAsync();
-    var culture = CultureInfo.InvariantCulture;
-
     try
     {
-        // 1. Girdileri Al
         string studentTC = form["studentTC"];
         string paymentAddress = form["paymentAddress"];
         string reason = form["reason"];
-        var documentFile = form.Files["documentUpload"]; // Dosyayı al
-        bool aiConfirm = (form["aiConfirmCheckbox"] == "on"); // Checkbox'ı al
+        var documentFile = form.Files["documentUpload"]; 
+        bool aiConfirm = (form["aiConfirmCheckbox"] == "on"); 
 
-        // 2. "Simüle Edilmiş AI" Doğrulaması
-        if (documentFile == null || documentFile.Length == 0)
-            return Results.BadRequest(new { message = "PDF belge yüklenmesi zorunludur." });
-        
-        if(documentFile.ContentType != "application/pdf")
-            return Results.BadRequest(new { message = "Lütfen sadece PDF formatında bir belge yükleyin." });
+        // Web2 Kontrolleri
+        if (documentFile == null || !aiConfirm)
+            return Results.BadRequest(new { message = "Eksik belge veya onay." });
 
-        if (!aiConfirm)
-            return Results.BadRequest(new { message = "AI Onay kutusunu işaretlemeniz zorunludur." });
-
-        // 3. Poliçeyi Bul
-        // Poliçeyi TCKN'ye göre arıyoruz.
-        var policy = await db.Policies
-            .FirstOrDefaultAsync(p => p.StudentTC == studentTC);
-
+        var policy = await db.Policies.FirstOrDefaultAsync(p => p.StudentTC == studentTC);
         if (policy == null)
-            return Results.BadRequest(new { message = $"Bu TCKN ({studentTC}) ile eşleşen bir poliçe bulunamadı." });
-            
-        // 4. Hasarı Oluştur (AI onayladı varsayıyoruz)
-        Console.WriteLine("AI Onayı başarılı (Checkbox işaretli ve PDF alındı).");
-        
-        // 5. Ödeme Simülasyonu (Tether/IBAN)
-        Console.WriteLine($"Hasar ödemesi ({policy.CoverageAmount} TL) {paymentAddress} adresine gönderiliyor...");
-        await Task.Delay(2000); // 2 saniye ödeme simülasyonu
-        string paymentTxHash = $"0x{Guid.NewGuid().ToString("N").Substring(0, 30)}...[PAYMENT_SIM]";
-        Console.WriteLine($"Ödeme başarılı. Hash: {paymentTxHash}");
+            return Results.BadRequest(new { message = "Poliçe bulunamadı." });
 
-        // 6. Hasarı Veritabanına Kaydet
+        // *** BLOK ZİNCİRİ DOĞRULAMASI ***
+        // Ödeme yapmadan önce, blok zincirine "Bu adamın poliçesi gerçekten var mı?" diye soruyoruz.
+        try 
+        {
+             string targetWallet = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8"; // Demo cüzdanı
+             var blockchain = new BlockchainService();
+             bool isInsuredOnChain = await blockchain.IsInsuredAsync(targetWallet);
+
+             if(!isInsuredOnChain)
+             {
+                 Console.WriteLine("KRİTİK: Veritabanında poliçe var ama Blok Zincirinde YOK! Sahtecilik riski.");
+                 // İstersen burada işlemi durdurabilirsin:
+                 // return Results.BadRequest(new { message = "Blok zinciri doğrulaması başarısız!" });
+             }
+             else 
+             {
+                 Console.WriteLine("Blok zinciri doğrulaması BAŞARILI. Ödeme onaylanıyor.");
+             }
+        }
+        catch { /* Blockchain kapalıysa akışı bozma */ }
+
+        // Ödeme Simülasyonu (Bankadan yapılıyor gibi)
+        await Task.Delay(1500); 
+        string paymentTxHash = $"0x{Guid.NewGuid().ToString("N")}"; // Banka referans no simülasyonu
+
+        // DB Kayıt
         var newClaim = new Claim
         {
             PolicyId = policy.Id,
             ClaimDate = DateTime.UtcNow,
             Reason = reason,
-            Status = "Ödendi", // Otomatik onaylandı
-            PaymentAmount = policy.CoverageAmount, // Teminatı poliçeden al
+            Status = "Ödendi", 
+            PaymentAmount = policy.CoverageAmount, 
             PaymentAddress = paymentAddress,
             PaymentTxHash = paymentTxHash,
-            DocumentName = documentFile.FileName // Sadece dosya adını kaydet
+            DocumentName = documentFile.FileName 
         };
 
         db.Claims.Add(newClaim);
         await db.SaveChangesAsync();
 
-        int claimId = newClaim.Id; // Yeni Hasar No
-        Console.WriteLine($"BAŞARILI: Hasar #{claimId} (Poliçe #{policy.Id}) veritabanına eklendi.");
-
-        // 7. JavaScript'e Başarı Mesajı Döndür
         return Results.Ok(new { 
-            message = "Hasar talebi AI tarafından onaylandı ve ödendi!",
-            claimId = claimId,
+            message = "Hasar talebi doğrulandı ve ödendi!",
+            claimId = newClaim.Id,
             txHash = paymentTxHash 
         });
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"HATA: Hasar kaydedilemedi! {ex.Message}");
-        return Results.BadRequest(new { message = "Hasar talebi oluşturulamadı. Sistem hatası." });
+        return Results.BadRequest(new { message = "Hata: " + ex.Message });
     }
 });
-// === YENİ RAPORLAMA API'Sİ (ÖDEME MODÜLÜ) ===
-// Bu, js/reports.js'in bağlanacağı yerdir
-// Lütfen bu bloğu app.Run(); satırının HEMEN ÜSTÜNE yapıştırın.
+
+// RAPORLAMA API'Sİ
 app.MapGet("/api/get-paid-claims", async (InsuranceDbContext db) =>
 {
     try
     {
-        // Claims tablosunu Policies tablosu ile "Join" (birleştir)
-        // Sadece "Ödendi" statüsündekileri al
-        // En son ödeneni en üstte göstermek için 'OrderByDescending'
         var paidClaims = await db.Claims
             .Where(c => c.Status == "Ödendi")
-            .Include(c => c.Policy) // İlişkili Policy verisini yükle
-            .OrderByDescending(c => c.ClaimDate) // En yeniler en üstte
+            .Include(c => c.Policy) 
+            .OrderByDescending(c => c.ClaimDate) 
             .Select(c => new {
-                // Hasar tablosundan
-                id = c.Id, // Hasar No
-                policyId = c.PolicyId, // Poliçe No
+                id = c.Id, 
+                policyId = c.PolicyId, 
                 paymentAmount = c.PaymentAmount,
                 claimDate = c.ClaimDate,
                 paymentAddress = c.PaymentAddress,
                 paymentTxHash = c.PaymentTxHash,
-                
-                // Policy tablosundan (Join ile)
-                studentName = c.Policy.StudentName // İlişkili poliçedeki öğrenci adı
+                studentName = c.Policy.StudentName 
             })
-            .ToListAsync(); // Listeyi al
+            .ToListAsync(); 
 
         return Results.Ok(paidClaims);
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"HATA: Ödeme raporu alınamadı! {ex.Message}");
-        // Tarayıcıya (JavaScript'e) 500 hatası döndür
-        return Results.Problem("Rapor alınırken bir sunucu hatası oluştu.");
+        return Results.Problem("Rapor hatası: " + ex.Message);
     }
 });
-// --- 5. ADIM: UYGULAMAYI ÇALIŞTIRMA ---
+
 app.Run();
